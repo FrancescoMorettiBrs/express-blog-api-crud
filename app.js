@@ -1,5 +1,6 @@
 // IMPORTAZIONI //
 import express from "express";
+import router from "./routers/post.js";
 
 // Creo l'applicazione web con express //
 const app = express();
@@ -8,7 +9,7 @@ const app = express();
 const port = 3000;
 
 // Rendo pubblici i contenuti della cartella "public" //
-app.use(express.static("public"))
+app.use(express.static("public"));
 
 app.get("/", (req, res) => {
   const resData = {
@@ -17,8 +18,9 @@ app.get("/", (req, res) => {
   res.json(resData);
 });
 
+app.use("/post", router);
+
 // Invoco la funzione di ascolto //
 app.listen(port, () => {
-    console.log(`Server in ascolto su http://localhost:${port}`);
-    
-})
+  console.log(`Server in ascolto su http://localhost:${port}`);
+});
