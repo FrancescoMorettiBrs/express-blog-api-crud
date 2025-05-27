@@ -1,6 +1,13 @@
 // QUI imposto la logica delle funzioni per poi esportare nelle routes //
 // Importo il mio array dal file data.js //
 import { posts } from "../data.js";
+// Creo una function per l'error 404 che si ripete più volte //
+const sendNotFound = (res) => {
+  res.status(404);
+  return res.json({
+    error: "Post non trovato",
+  });
+};
 
 // INDEX: lettura di tutti i post //
 const index = (req, res) => {
@@ -8,10 +15,7 @@ const index = (req, res) => {
   let result = posts;
 
   if (postsFilter !== undefined) {
-    console.log(postsFilter);
-
     result = posts.filter((curPost) => curPost.tags.includes(postsFilter));
-    console.log(result);
   }
   res.json({
     data: result,
@@ -23,10 +27,7 @@ const show = (req, res) => {
   const postId = req.params.id;
   const post = posts.find((curPost) => curPost.id === postId);
   if (!post) {
-    res.status(404);
-    res.json({
-      error: "Post non trovato",
-    });
+    return sendNotFound(res);
   } else {
     res.status(200);
     res.json({
@@ -36,15 +37,35 @@ const show = (req, res) => {
 };
 // STORE: creazione di un post //
 const store = (req, res) => {
+  const newPost = req.body;
+  const lastPost = parseInt(posts[posts.length - 1].id);
+  newPost.id = (lastPost + 1).toString();
+  posts.push(newPost);
+  console.log(newPost);
+
+  res.status(201);
   res.json({
-    data: "Aggiungo un nuovo post",
+    data: newPost,
   });
 };
 // UPDATE: modifica di un post //
 const update = (req, res) => {
   const postId = req.params.id;
+  const updatedPostData = req.body;
+  const post = posts.find((curPost) => curPost.id === postId);
+
+  if (!post) {
+    return sendNotFound(res);
+  }
+
+  post.titolo = updatedPostData.titolo;
+  post.contenuto = updatedPostData.contenuto;
+  post.tags = updatedPostData.tags;
+  post.immagine = updatedPostData.immagine;
+  console.log(post);
+
   res.json({
-    data: `Modifico il post con id ${postId}`,
+    data: post,
   });
 };
 // DESTROY: cancellazione di un post //
