@@ -1,6 +1,9 @@
 // IMPORTAZIONI //
 import express from "express";
 import router from "./routers/post.js";
+import { routeNotFound } from "./middlewares/routeNotFound.js";
+import { errorHandler } from "./middlewares/errorHandler.js";
+// import { loggingMiddleware } from "./middlewares/loggingMiddleware.js";
 
 // Creo l'applicazione web con express //
 const app = express();
@@ -11,6 +14,8 @@ const port = 3000;
 // Rendo pubblici i contenuti della cartella "public" //
 app.use(express.static("public"));
 app.use(express.json())
+// registrato a livello globale
+// app.use(loggingMiddleware)
 
 app.get("/", (req, res) => {
   const resData = {
@@ -20,6 +25,10 @@ app.get("/", (req, res) => {
 });
 
 app.use("/post", router);
+// Registro un errore se la rotta non esiste
+app.use(routeNotFound)
+// Registrazione errore interno del server 
+app.use(errorHandler);
 
 // Invoco la funzione di ascolto //
 app.listen(port, () => {

@@ -12,11 +12,23 @@ const sendNotFound = (res) => {
 // INDEX: lettura di tutti i post //
 const index = (req, res) => {
   const postsFilter = req.query.tags;
-  let result = posts;
+  const { titolo, contenuto, tags } = req.query;
+
+  let result = [...posts];
 
   if (postsFilter !== undefined) {
-    result = posts.filter((curPost) => curPost.tags.includes(postsFilter));
+    result = result.filter((curPost) => curPost.tags.includes(postsFilter));
   }
+
+  // Esempi di filtraggio
+  // if (titolo) {
+  //   result = posts.filter((curPost) => curPost.titolo.toLowerCase().includes(titolo.toLowerCase()));
+  // }
+
+  // if (contenuto) {
+  //   result = posts.filter((curPost) => curPost.contenuto.toLowerCase().includes(contenuto.toLowerCase()));
+  // }
+
   res.json({
     data: result,
     count: result.length,
