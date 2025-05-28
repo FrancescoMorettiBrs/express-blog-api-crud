@@ -1,13 +1,14 @@
 // QUI imposto la logica delle funzioni per poi esportare nelle routes //
 // Importo il mio array dal file data.js //
 import { posts } from "../data.js";
+import { checkPostExistMiddleware } from "../middlewares/checkPostExistMiddleware.js";
 // Creo una function per l'error 404 che si ripete più volte //
-const sendNotFound = (res) => {
-  res.status(404);
-  return res.json({
-    error: "Post non trovato",
-  });
-};
+// const sendNotFound = (res) => {
+//   res.status(404);
+//   return res.json({
+//     error: "Post non trovato",
+//   });
+// };
 
 // INDEX: lettura di tutti i post //
 const index = (req, res) => {
@@ -36,16 +37,11 @@ const index = (req, res) => {
 };
 // SHOW: lettura di un singolo post //
 const show = (req, res) => {
-  const postId = req.params.id;
-  const post = posts.find((curPost) => curPost.id === postId);
-  if (!post) {
-    return sendNotFound(res);
-  } else {
-    res.status(200);
-    res.json({
-      data: post,
-    });
-  }
+  const post = posts[req.postIndex];
+  
+  res.json({
+    data: post,
+  });
 };
 // STORE: creazione di un post //
 const store = (req, res) => {
@@ -62,14 +58,9 @@ const store = (req, res) => {
 };
 // UPDATE: modifica di un post //
 const update = (req, res) => {
-  const postId = req.params.id;
   const updatedPostData = req.body;
-  const post = posts.find((curPost) => curPost.id === postId);
-
-  if (!post) {
-    return sendNotFound(res);
-  }
-
+  const post = posts[req.postIndex];
+  
   post.titolo = updatedPostData.titolo;
   post.contenuto = updatedPostData.contenuto;
   post.tags = updatedPostData.tags;
@@ -82,20 +73,8 @@ const update = (req, res) => {
 };
 // DESTROY: cancellazione di un post //
 const destroy = (req, res) => {
-  const postId = req.params.id;
-  const index = posts.findIndex((curPost) => curPost.id === postId);
-  if (index === -1) {
-    res.status(404);
-    res.json({
-      error: "Post non trovato",
-    });
-  } else {
-    posts.splice(index, 1);
-    res.status(204);
-    res.json({
-      data: `Elimino il post con id ${postId}`,
-    });
-  }
+  posts.splice(req.postIndex, 1);
+  res.sendStatus(204);
 };
 
 // creo un oggetto che comprende tutte le mie funzioni e lo esporto //

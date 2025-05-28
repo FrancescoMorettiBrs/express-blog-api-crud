@@ -3,7 +3,7 @@ import express from "express";
 import router from "./routers/post.js";
 import { routeNotFound } from "./middlewares/routeNotFound.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
-// import { loggingMiddleware } from "./middlewares/loggingMiddleware.js";
+import { loggingMiddleware } from "./middlewares/loggingMiddleware.js";
 
 // Creo l'applicazione web con express //
 const app = express();
@@ -15,7 +15,7 @@ const port = 3000;
 app.use(express.static("public"));
 app.use(express.json())
 // registrato a livello globale
-// app.use(loggingMiddleware)
+app.use(loggingMiddleware)
 
 app.get("/", (req, res) => {
   const resData = {
